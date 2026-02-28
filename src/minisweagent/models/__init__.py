@@ -19,7 +19,9 @@ class GlobalModelStats:
         self._lock = threading.Lock()
         self.cost_limit = float(os.getenv("MSWEA_GLOBAL_COST_LIMIT", "0"))
         self.call_limit = int(os.getenv("MSWEA_GLOBAL_CALL_LIMIT", "0"))
-        if (self.cost_limit > 0 or self.call_limit > 0) and not os.getenv("MSWEA_SILENT_STARTUP"):
+        if (self.cost_limit > 0 or self.call_limit > 0) and not os.getenv(
+            "MSWEA_SILENT_STARTUP"
+        ):
             print(f"Global cost/call limit: ${self.cost_limit:.4f} / {self.call_limit}")
 
     def add(self, cost: float) -> None:
@@ -28,7 +30,9 @@ class GlobalModelStats:
             self._cost += cost
             self._n_calls += 1
         if 0 < self.cost_limit < self._cost or 0 < self.call_limit < self._n_calls + 1:
-            raise RuntimeError(f"Global cost/call limit exceeded: ${self._cost:.4f} / {self._n_calls}")
+            raise RuntimeError(
+                f"Global cost/call limit exceeded: ${self._cost:.4f} / {self._n_calls}"
+            )
 
     @property
     def cost(self) -> float:
@@ -53,7 +57,10 @@ def get_model(input_model_name: str | None = None, config: dict | None = None) -
     model_class = get_model_class(resolved_model_name, config.pop("model_class", ""))
 
     if (
-        any(s in resolved_model_name.lower() for s in ["anthropic", "sonnet", "opus", "claude"])
+        any(
+            s in resolved_model_name.lower()
+            for s in ["anthropic", "sonnet", "opus", "claude"]
+        )
         and "set_cache_control" not in config
     ):
         # Select cache control for Anthropic models by default
@@ -62,7 +69,9 @@ def get_model(input_model_name: str | None = None, config: dict | None = None) -
     return model_class(**config)
 
 
-def get_model_name(input_model_name: str | None = None, config: dict | None = None) -> str:
+def get_model_name(
+    input_model_name: str | None = None, config: dict | None = None
+) -> str:
     """Get a model name from any kind of user input or settings."""
     if config is None:
         config = {}
@@ -72,7 +81,9 @@ def get_model_name(input_model_name: str | None = None, config: dict | None = No
         return from_config
     if from_env := os.getenv("MSWEA_MODEL_NAME"):
         return from_env
-    raise ValueError("No default model set. Please run `mini-extra config setup` to set one.")
+    raise ValueError(
+        "No default model set. Please run `mini-extra config setup` to set one."
+    )
 
 
 _MODEL_CLASS_MAPPING = {
@@ -86,6 +97,7 @@ _MODEL_CLASS_MAPPING = {
     "portkey_response": "minisweagent.models.portkey_response_model.PortkeyResponseAPIModel",
     "requesty": "minisweagent.models.requesty_model.RequestyModel",
     "deterministic": "minisweagent.models.test_models.DeterministicModel",
+    "giga": "minisweagent.models.giga_model.GigaModel",
 }
 
 
