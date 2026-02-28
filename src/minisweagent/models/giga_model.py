@@ -9,9 +9,9 @@ from shooters.devices import ThreadShooter
 from minisweagent.models import GLOBAL_MODEL_STATS
 from minisweagent.models.utils.actions_toolcall import (
     BASH_TOOL,
+    FormatError,
     StrictUndefined,
     Template,
-    parse_toolcall_actions,
 )
 from minisweagent.models.utils.anthropic_utils import _reorder_anthropic_thinking_blocks
 from minisweagent.models.utils.cache_control import set_cache_control
@@ -101,7 +101,10 @@ class GigaModel:
 
     def _parse_actions(self, response: dict) -> list[dict]:
         """Parse function call from the response. Raises FormatError if unknown tool."""
-        function_calls = [response["choices"][0]["message"].get("function_call")] or []
+        function_call = response["choices"][0]["message"].get("function_call")
+        function_calls = []
+        if function_call is not None:
+            function_calls = [{"function": function_call}]
         assert len(function_calls) <= 1, "Only one function call is supported"
         tool_calls = [_DictToObj(_) for _ in function_calls]
         return parse_toolcall_actions(
@@ -148,6 +151,16 @@ class _DictToObj:
         self.name = d.get("name")
         self.arguments = d.get("arguments")
 
+    def __repr__(self) -> str:
+        return str(
+            {
+                "id": self.id,
+                "function": self.function,
+                "name": self.name,
+                "arguments": self.arguments,
+            }
+        )
+
 
 def format_toolcall_observation_messages(
     *,
@@ -188,3 +201,46 @@ def format_toolcall_observation_messages(
             msg = expand_multimodal_content(msg, pattern=multimodal_regex)
         results.append(msg)
     return results
+
+
+def parse_toolcall_actions(
+    tool_calls: list, *, format_error_template: str
+) -> list[dict]:
+    """Parse tool calls from the response. Raises FormatError if unknown tool or invalid args."""
+    if not tool_calls:
+        raise FormatError(
+            {
+                "role": "user",
+                "content": Template(
+                    format_error_template, undefined=StrictUndefined
+                ).render(
+                    error="No tool calls found in the response. Every response MUST include at least one tool call.",
+                    actions=[],
+                ),
+                "extra": {"interrupt_type": "FormatError"},
+            }
+        )
+    actions = []
+    for tool_call in tool_calls:
+        error_msg = ""
+        args = {}
+        try:
+            args = json.loads(tool_call.function.arguments)
+        except Exception as e:
+            error_msg = f"Error parsing tool call arguments: {e}."
+        if tool_call.function.name != "bash":
+            error_msg += f"Unknown tool '{tool_call.function.name}'."
+        if not isinstance(args, dict) or "command" not in args:
+            error_msg += "Missing 'command' argument in bash tool call."
+        if error_msg:
+            raise FormatError(
+                {
+                    "role": "user",
+                    "content": Template(
+                        format_error_template, undefined=StrictUndefined
+                    ).render(actions=[], error=error_msg.strip()),
+                    "extra": {"interrupt_type": "FormatError"},
+                }
+            )
+        actions.append({"command": args["command"], "tool_call_id": tool_call.id})
+    return actions
