@@ -192,11 +192,7 @@ def format_toolcall_observation_messages(
                 **output.get("extra", {}),
             },
         }
-        if "tool_call_id" in action:
-            msg["tool_call_id"] = action["tool_call_id"]
-            msg["role"] = "tool"
-        else:
-            msg["role"] = "function"  # human issued commands
+        msg["role"] = "function"  # human issued commands
         if multimodal_regex:
             msg = expand_multimodal_content(msg, pattern=multimodal_regex)
         results.append(msg)
