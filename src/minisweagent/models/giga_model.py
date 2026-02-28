@@ -225,7 +225,7 @@ def parse_toolcall_actions(
         error_msg = ""
         args = {}
         try:
-            args = json.loads(tool_call.function.arguments)
+            args = tool_call.function.arguments
         except Exception as e:
             error_msg = f"Error parsing tool call arguments: {e}."
         if tool_call.function.name != "bash":
