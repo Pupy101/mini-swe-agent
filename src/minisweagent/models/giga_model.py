@@ -18,7 +18,7 @@ from minisweagent.models.utils.cache_control import set_cache_control
 from minisweagent.models.utils.openai_multimodal import expand_multimodal_content
 from minisweagent.models.utils.retry import retry
 
-logger = logging.getLogger("openrouter_model")
+logger = logging.getLogger("giga")
 
 
 class GigaModelConfig(BaseModel):
@@ -97,10 +97,11 @@ class GigaModel:
         return message
 
     def _calculate_cost(self, response) -> dict[str, float]:
-        return {"cost": 0.00001}
+        return {"cost": 0.012}
 
     def _parse_actions(self, response: dict) -> list[dict]:
         """Parse function call from the response. Raises FormatError if unknown tool."""
+
         function_call = response["choices"][0]["message"].get("function_call")
         function_calls = []
         if function_call is not None:
