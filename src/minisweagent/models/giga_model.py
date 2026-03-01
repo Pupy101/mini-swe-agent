@@ -66,6 +66,7 @@ class GigaModel:
             "model": self.config.model_name,
             "messages": messages,
             "functions": [BASH_TOOL["function"]],
+            "function_call": {"name": "bash"},
             **(self.config.model_kwargs | kwargs),
         }
 
