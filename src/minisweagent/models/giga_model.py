@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 import time
@@ -70,6 +71,8 @@ class GigaModel:
 
         try:
             response = self.shooter.chat(payload)
+            if response is None:
+                raise GigaAPIError("Response is None")
             return response.model_dump()
         except Exception as e:
             raise GigaAPIError(f"Request failed: {e}") from e
@@ -184,7 +187,7 @@ def format_toolcall_observation_messages(
             output=output, **(template_vars or {})
         )
         msg = {
-            "content": content,
+            "content": json.dumps({"result": content}),
             "extra": {
                 "raw_output": output.get("output", ""),
                 "returncode": output.get("returncode"),
