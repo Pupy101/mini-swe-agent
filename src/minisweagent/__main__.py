@@ -3,7 +3,6 @@
 import logging
 from minisweagent.run.mini import app
 
-logging.basicConfig(filename="mini.log", filemode="w", level=logging.INFO)
 
 if __name__ == "__main__":
     app()

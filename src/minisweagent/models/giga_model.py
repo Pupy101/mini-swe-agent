@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import time
+import copy
 from typing import Any, Literal
 
 from pydantic import BaseModel
@@ -69,9 +70,10 @@ class GigaModel:
             # "function_call": {"name": "bash"},
             **(self.config.model_kwargs | kwargs),
         }
-        logger.info("Payload: %s", json.dumps(payload, ensure_ascii=False, indent=4))
 
-        # print(json.dumps(payload, ensure_ascii=False))
+        payload_ = copy.deepcopy(payload)
+        payload_["messages"] = payload_["messages"][-2:]
+        print(payload_)
 
         try:
             response = self.shooter.chat(payload)
