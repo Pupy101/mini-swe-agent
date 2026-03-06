@@ -72,8 +72,8 @@ class GigaModel:
         }
 
         payload_ = copy.deepcopy(payload)
-        payload_.pop("functions")
-        payload_.pop("function_call")
+        for keys in ["functions_state_id", "functions", "function_call"]
+            payload_.pop(key)
         payload_["messages"] = payload_["messages"][-2:-1]
         print(payload_)
 
