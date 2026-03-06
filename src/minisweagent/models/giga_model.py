@@ -69,6 +69,7 @@ class GigaModel:
             # "function_call": {"name": "bash"},
             **(self.config.model_kwargs | kwargs),
         }
+        logger.info("Payload: %s", json.dumps(payload, ensure_ascii=False, indent=4))
 
         # print(json.dumps(payload, ensure_ascii=False))
 

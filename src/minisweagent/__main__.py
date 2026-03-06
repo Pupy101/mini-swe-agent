@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """This is what happens when you do `python -m minisweagent` or `pipx run mini-swe-agent`."""
-
+import logging
 from minisweagent.run.mini import app
+
+logging.basicConfig(filename="mini.log", filemode="w", level=logging.INFO)
 
 if __name__ == "__main__":
     app()
