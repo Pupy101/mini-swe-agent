@@ -75,10 +75,11 @@ class GigaModel:
         for key in ["functions", "function_call"]:
             payload_.pop(key)
         message_ = payload_["messages"][-2]
-        print(message_)
-        message_.pop("functions_state_id")
+        if "functions_state_id" in message_:
+            message_.pop("functions_state_id")
         payload_["messages"] = [message_]
-        print(payload_)
+        if message_["role"] != "system":
+            print(payload_)
 
         try:
             response = self.shooter.chat(payload)
