@@ -78,7 +78,7 @@ class GigaModel:
         # if "functions_state_id" in message_:
         #     message_.pop("functions_state_id")
         payload_["messages"] = message_
-        if message_["role"] == "system":
+        if message_[0]["role"] == "system":
             print(payload_)
 
         try:
