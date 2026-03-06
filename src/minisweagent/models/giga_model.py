@@ -184,7 +184,7 @@ def format_toolcall_observation_messages(
     padded_outputs = outputs + [not_executed] * (len(actions) - len(outputs))
     results = []
     for action, output in zip(actions, padded_outputs):
-        content = json.dumps({"returncode": output['returncode'], "output": output['output']}, ensure_as)
+        content = json.dumps({"returncode": output['returncode'], "output": output.get('output')}, ensure_ascii=False)
         msg = {
             "content": content,
             "extra": {
