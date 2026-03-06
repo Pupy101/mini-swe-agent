@@ -79,7 +79,7 @@ class GigaModel:
             response = self.shooter.chat(payload)
             if response is None:
                 raise GigaAPIError("Response is None")
-            return response.model_dump()
+            return response.model_dump(exclude_none=True)
         except Exception as e:
             raise GigaAPIError(f"Request failed: {e}") from e
 
