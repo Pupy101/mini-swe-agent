@@ -184,11 +184,9 @@ def format_toolcall_observation_messages(
     padded_outputs = outputs + [not_executed] * (len(actions) - len(outputs))
     results = []
     for action, output in zip(actions, padded_outputs):
-        content = Template(observation_template, undefined=StrictUndefined).render(
-            output=output, **(template_vars or {})
-        )
+        content = json.dumps({"returncode": output['returncode'], "output": output['output']}, ensure_as)
         msg = {
-            "content": json.dumps({"result": content}),
+            "content": content,
             "extra": {
                 "raw_output": output.get("output", ""),
                 "returncode": output.get("returncode"),
