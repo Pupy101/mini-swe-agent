@@ -70,6 +70,8 @@ class GigaModel:
             **(self.config.model_kwargs | kwargs),
         }
 
+        print(json.dumps(payload, ensure_ascii=False))
+
         try:
             response = self.shooter.chat(payload)
             if response is None:
