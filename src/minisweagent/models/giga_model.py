@@ -74,7 +74,7 @@ class GigaModel:
         payload_ = copy.deepcopy(payload)
         payload_.pop("functions")
         payload_.pop("function_call")
-        payload_["messages"] = payload_["messages"][-2:]
+        payload_["messages"] = payload_["messages"][-2:-1]
         print(payload_)
 
         try:
