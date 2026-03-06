@@ -79,6 +79,8 @@ class GigaModel:
         #     message_.pop("functions_state_id")
         payload_["messages"] = message_
         if message_[0]["role"] == "system":
+            with open("output.json", "w") as fp:
+                fp.write(json.dumps(payload_))
             print(payload_)
 
         try:
