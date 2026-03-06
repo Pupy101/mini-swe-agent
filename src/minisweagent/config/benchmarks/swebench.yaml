@@ -172,6 +172,4 @@ model:
     submit your solution (you will not be able to continue working on this task after that).
   model_name: "anthropic/claude-sonnet-4-5-20250929"
   model_kwargs:
-    drop_params: true
     temperature: 0.0
-    parallel_tool_calls: true

@@ -66,11 +66,11 @@ class GigaModel:
             "model": self.config.model_name,
             "messages": messages,
             "functions": [BASH_TOOL["function"]],
-            "function_call": {"name": "bash"},
+            # "function_call": {"name": "bash"},
             **(self.config.model_kwargs | kwargs),
         }
 
-        print(json.dumps(payload, ensure_ascii=False))
+        # print(json.dumps(payload, ensure_ascii=False))
 
         try:
             response = self.shooter.chat(payload)
