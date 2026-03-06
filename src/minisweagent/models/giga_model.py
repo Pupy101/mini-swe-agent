@@ -72,13 +72,13 @@ class GigaModel:
         }
 
         payload_ = copy.deepcopy(payload)
-        for key in ["functions", "function_call"]:
-            payload_.pop(key)
-        message_ = payload_["messages"][-2]
-        if "functions_state_id" in message_:
-            message_.pop("functions_state_id")
-        payload_["messages"] = [message_]
-        if message_["role"] != "system":
+        # for key in ["functions", "function_call"]:
+        #     payload_.pop(key)
+        message_ = payload_["messages"][-2:]
+        # if "functions_state_id" in message_:
+        #     message_.pop("functions_state_id")
+        payload_["messages"] = message_
+        if message_["role"] == "system":
             print(payload_)
 
         try:
